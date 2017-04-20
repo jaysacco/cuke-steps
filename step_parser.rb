@@ -30,27 +30,42 @@ class StepParser
   def parse_lines
     @comments = []
     while not @lines.empty?
-
       line = next_line
       case line
-      when /^ *#/
-        @comments << line
-      when /^(Given|When|Then|Before|After|AfterStep|Transform)[ (]/
-        unread(line)
-        parse_step
-        @comments = []
-      when /^\s+(Given|When|Then|Before|After|AfterStep|Transform)[ (]/
-        puts "WARNING:  Indented step definition in file #{@current_file}:  #{line}"
-        # remove leading spaces
-        line = line.lstrip
-        unread(line)
-        parse_step
-        @comments = []
-      else
-        @comments = []
+        # process ruby or c# comment lines
+        when /^ *(#|\/+)/
+          @comments << line
+        # process ruby step lines, with or without leading white space
+        when /^\s*(Given|When|Then|Before|After|AfterStep|Transform)[ (]/
+          # remove leading spaces
+          line = line.lstrip
+          unread(line)
+          parse_step
+          @comments = []
+        # process c# step lines, with or without leading white space
+        when /^\s*(\[Given|\[When|\[Then|\[Before|\[After|\[AfterStep|\[Transform)/
+          line = cleanCSharpAttribute(line)
+          type = parse_step_type(line)
+          name = parse_step_name(line)
+          line_number = @line_number  
+          # for now, don't bother trying to include the code, it's too much work to parse correctly
+          code = @comments << "The actual c# code is not displayed. This could be a future enhancement"
+          @steps << { :type => type, :name => name, :filename => @current_file, :code => code, :line_number => line_number }
+          @comments = []
+        else
+          @comments = []
       end
 
     end
+  end
+  
+  def cleanCSharpAttribute(line)
+    # remove leading spaces
+    line = line.lstrip
+    # remove c# attribute decoration characters
+    line = line.sub('@','')
+    line = line.sub('[','')
+    line = line.sub(']','')
   end
 
   def parse_step

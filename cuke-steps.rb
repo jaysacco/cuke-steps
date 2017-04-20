@@ -2,6 +2,7 @@
 #-*- encoding: utf-8 -*-
 
 require 'optparse'
+require 'pry'
 
 require_relative 'step_parser'
 require_relative 'confluence_step_outputter'
@@ -73,7 +74,12 @@ output.header
 dirs.each do |dir|
   dir = dir.sub(/\/+$/, "")
   s = StepParser.new
+  # read in ruby files
   Dir.glob("#{dir}/**/*.rb") do |file|
+    s.read(file)
+  end
+  # read in c sharp files
+  Dir.glob("#{dir}/**/*.cs") do |file|
     s.read(file)
   end
   steps = s.steps
