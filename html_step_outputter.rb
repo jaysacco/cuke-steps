@@ -49,13 +49,15 @@ class HtmlStepOutputter
   end
   
   def footer
-    @file.puts <<-eos
-      </ul>
-      <p>&nbsp;</p>
-      <p><em>Documentation generated #{Time.now}</em></p>
-      </body>
-      </html>
-    eos
+    # Commented out time stamp so doc doesn't appear changed every time it gets built (when nothing has really changed),
+    #which is undesirable for source code control systems
+    #@file.puts <<-eos
+    #  </ul>
+    #  <p>&nbsp;</p>
+    # <p><em>Documentation generated #{Time.now}</em></p>
+    #  </body>
+    #  </html>
+    #eos
   end
 
   
@@ -67,6 +69,7 @@ class HtmlStepOutputter
     @file.puts %(</ul>) if @previous_type != ""
     @file.puts %(<p>&nbsp;</p>)
     @file.puts %(<h2>Step definitions in #{dir}/</h2>)
+    @file.puts %(<h3>(click on definition to reveal step code)</h3>)
     @previous_type = ""
   end
 

@@ -41,6 +41,10 @@ class StepParser
         @comments = []
       when /^\s+(Given|When|Then|Before|After|AfterStep|Transform)[ (]/
         puts "WARNING:  Indented step definition in file #{@current_file}:  #{line}"
+        # remove leading spaces
+        line = line.lstrip
+        unread(line)
+        parse_step
         @comments = []
       else
         @comments = []
