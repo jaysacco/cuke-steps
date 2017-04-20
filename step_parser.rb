@@ -75,17 +75,19 @@ class StepParser
     code = @comments
     line = ""
     # we need to find at least one end before we're done
-    openEndCount = 1
+    openEndCount = 0
     while !@lines.empty?
       # process the line
       line = next_line
       code << line
-      # if the line contains a ruby keyword that will required a corresponding end statement
-      if(line =~ /^\s*(while|case|if|do|begin)\s*#*.*$/)
+      # if the line contains a ruby keyword that will require a corresponding end statement
+      match = line =~ /^[^,#]* (Given|When|Then|Transform|while|case|if|do|begin)\s*#*.*$/
+      if(match != nil && match)
         openEndCount += 1
       end
       # if the line contains an end statement)
-      if(line =~ /^\s*end\s*#*.*$/)
+      match = line =~ /^\s*end\s*#*.*$/
+      if(match != nil && match)
         openEndCount -= 1
       end
     # if we've found the end statement that completes this step definition, we're done
