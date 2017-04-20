@@ -1,4 +1,4 @@
-# Class that parses step definitions from Ruby files
+# Class that parses step definitions from Ruby files and c# files
 
 class StepParser
 
@@ -74,9 +74,24 @@ class StepParser
     line_number = @line_number + 1
     code = @comments
     line = ""
-    while !@lines.empty? && !(line =~ /^end\s*$/)
+    # we need to find at least one end before we're done
+    openEndCount = 1
+    while !@lines.empty?
+      # process the line
       line = next_line
       code << line
+      # if the line contains a ruby keyword that will required a corresponding end statement
+      if(line =~ /^\s*(while|case|if|do|begin)\s*#*.*$/)
+        openEndCount += 1
+      end
+      # if the line contains an end statement)
+      if(line =~ /^\s*end\s*#*.*$/)
+        openEndCount -= 1
+      end
+    # if we've found the end statement that completes this step definition, we're done
+      if(openEndCount == 0)
+        break
+      end
     end
     @steps << { :type => type, :name => name, :filename => @current_file, :code => code, :line_number => line_number }
   end
