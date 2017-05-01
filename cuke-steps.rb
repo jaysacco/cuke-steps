@@ -2,7 +2,6 @@
 #-*- encoding: utf-8 -*-
 
 require 'optparse'
-require 'pry'
 
 require_relative 'step_parser'
 require_relative 'confluence_step_outputter'
