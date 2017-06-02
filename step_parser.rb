@@ -47,7 +47,7 @@ class StepParser
           line = cleanCSharpAttribute(line)
           type = parse_step_type(line)
           name = parse_step_name(line)
-          line_number = @line_number  
+          line_number = @line_number
           # for now, don't bother trying to include the code, it's too much work to parse correctly
           code = @comments << "The actual c# code is not displayed. This could be a future enhancement"
           @steps << { :type => type, :name => name, :filename => @current_file, :code => code, :line_number => line_number }
@@ -58,7 +58,7 @@ class StepParser
 
     end
   end
-  
+
   def cleanCSharpAttribute(line)
     # remove leading spaces
     line = line.lstrip
